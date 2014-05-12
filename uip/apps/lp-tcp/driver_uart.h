@@ -23,4 +23,6 @@ int driver_uart_send_buf(char *buf, uint16_t len);
 
 void driver_uart_recv();
 
+void devicedriver_send();
+
 #endif /* DRIVER_UART_H_ */

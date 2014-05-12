@@ -8,6 +8,7 @@
 #include <stdint.h>
 
 #include "driver_uart.h"
+#include "uip.h"
 
 void driver_uart_init() {
 	/*** Configure Clock ***/
@@ -40,6 +41,11 @@ int driver_uart_send_buf(char *buf, uint16_t len) {
 		res = driver_uart_send_char(buf[i]);
 	}
 	return res;
+}
+
+void devicedriver_send() {
+	driver_uart_send_buf(uip_buf, uip_len);
+	driver_uart_send_char(0xC0);
 }
 
 #pragma vector=USCIAB0RX_VECTOR
