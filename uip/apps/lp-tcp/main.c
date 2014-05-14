@@ -8,20 +8,28 @@ int main(void) {
 
 	WDTCTL = WDTPW | WDTHOLD;		// Stop watchdog timer
 
+//	init_clocks();
 	driver_uart_init();
 	uip_init();
 
-	uip_ipaddr_t dst = {0};
-	u16_t port = 10;
+	uip_ipaddr_t dst, ipaddr;
 
-	conn = uip_connect(&dst, hton(port));
+	uip_ipaddr(ipaddr, 192,168,5,2);
+	uip_sethostaddr(ipaddr);
+	uip_ipaddr(ipaddr, 192,168,5,1);
+	uip_setdraddr(ipaddr);
+	uip_ipaddr(ipaddr, 255,255,255,0);
+	uip_setnetmask(ipaddr);
+
+	uip_ipaddr(dst, 173,194,33,112);
+	u16_t port = 80;
+
+	conn = uip_connect(&dst, htons(port));
 	if (conn == 0) {
 		_nop();
 	}
 
 	for(;;) {
-
-
 		for(i = 0; i < UIP_CONNS; ++i) {
 		    uip_periodic(i);
 		    if(uip_len > 0) {
@@ -30,3 +38,8 @@ int main(void) {
 		}
 	}
 }
+
+
+//void init_clocks() {
+//
+//}

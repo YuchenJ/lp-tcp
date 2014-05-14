@@ -10,6 +10,11 @@
 #include "driver_uart.h"
 #include "uip.h"
 
+#define SLIP_END 0xC0
+#define SLIP_ESC 0xDB
+#define SLIP_ESC_END 0xDC
+#define SLIP_ESC_ESC 0xDD
+
 void driver_uart_init() {
 	/*** Configure Clock ***/
 	DCOCTL = 0;
@@ -38,14 +43,26 @@ int driver_uart_send_buf(char *buf, uint16_t len) {
 	uint16_t i;
 	uint8_t res;
 	for (i = 0; i < len; i++) {
-		res = driver_uart_send_char(buf[i]);
+		switch(buf[i]) {
+		case SLIP_END:
+			driver_uart_send_char(SLIP_ESC);
+			driver_uart_send_char(SLIP_ESC_END);
+			break;
+		case SLIP_ESC:
+			driver_uart_send_char(SLIP_ESC);
+			driver_uart_send_char(SLIP_ESC_ESC);
+			break;
+		default:
+			res = driver_uart_send_char(buf[i]);
+		}
+
 	}
 	return res;
 }
 
 void devicedriver_send() {
 	driver_uart_send_buf(uip_buf, uip_len);
-	driver_uart_send_char(0xC0);
+	driver_uart_send_char(SLIP_END);
 }
 
 #pragma vector=USCIAB0RX_VECTOR
