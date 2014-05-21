@@ -1,5 +1,6 @@
 #include <msp430.h>
 #include "driver_uart.h"
+#include "driver_timer.h"
 #include "uip.h"
 
 int main(void) {
@@ -11,6 +12,8 @@ int main(void) {
 //	init_clocks();
 	driver_uart_init();
 	uip_init();
+	timer_init();
+	_BIS_SR(GIE);
 
 	uip_ipaddr_t dst, ipaddr;
 
@@ -39,7 +42,6 @@ int main(void) {
 	}
 }
 
+/*void init_clocks() {
 
-//void init_clocks() {
-//
-//}
+}*/

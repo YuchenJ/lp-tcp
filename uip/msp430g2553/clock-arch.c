@@ -38,12 +38,16 @@
  *         Adam Dunkels <adam@sics.se>
  */
 
+#include <msp430.h>
 #include "clock-arch.h"
 
 /*---------------------------------------------------------------------------*/
+
+clock_time_t volatile sys_time = 0;
+
 clock_time_t
 clock_time(void)
 {
-  return 1;
+  return sys_time;
 }
 /*---------------------------------------------------------------------------*/
