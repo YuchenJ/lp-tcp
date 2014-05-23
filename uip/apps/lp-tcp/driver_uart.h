@@ -14,14 +14,15 @@
 #endif // __MSP430G2553__
 
 #include <stdint.h>
+#include "uip.h"
 
-u16_t devicedriver_uip_len;
+extern u16_t devicedriver_uip_len;
 
 void driver_uart_init();
 
 int driver_uart_send_char(char _c);
 
-int driver_uart_send_buf(char *buf, uint16_t len);
+int driver_uart_send_buf(u8_t *buf, uint16_t len);
 
 void driver_uart_recv();
 

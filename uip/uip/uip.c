@@ -90,6 +90,7 @@
 #endif /* UIP_CONF_IPV6 */
 
 #include <string.h>
+#include <msp430.h>
 
 /*---------------------------------------------------------------------------*/
 /* Variable definitions. */
@@ -138,7 +139,7 @@ const struct uip_eth_addr uip_ethaddr = {{UIP_ETHADDR0,
 #endif
 
 #ifndef UIP_CONF_EXTERNAL_BUFFER
-#define UIP_BUFSIZE 64
+#define UIP_BUFSIZE 128
 	u8_t uip_buf[UIP_BUFSIZE + 2];   /* The packet buffer that contains
 				    incoming packets. */
 #endif /* UIP_CONF_EXTERNAL_BUFFER */
@@ -837,6 +838,7 @@ const struct uip_eth_addr uip_ethaddr = {{UIP_ETHADDR0,
 		UIP_STAT(++uip_stat.ip.recv);
 
 		/* Start of IP input header processing code. */
+		P1OUT ^= BIT5;
 
 #if UIP_CONF_IPV6
 		/* Check validity of the IP header. */
@@ -1807,6 +1809,7 @@ const struct uip_eth_addr uip_ethaddr = {{UIP_ETHADDR0,
 		tcp_send_noopts:
 		BUF->tcpoffset = (UIP_TCPH_LEN / 4) << 4;
 		tcp_send:
+		P1OUT ^= BIT6;
 		/* We're done with the input processing. We are now ready to send a
      reply. Our job is to fill in all the fields of the TCP and IP
      headers before calculating the checksum and finally send the
@@ -1885,6 +1888,7 @@ const struct uip_eth_addr uip_ethaddr = {{UIP_ETHADDR0,
 		uip_flags = 0;
 		return;
 		drop:
+		P1OUT ^= BIT7;
 		uip_len = 0;
 		uip_flags = 0;
 		return;

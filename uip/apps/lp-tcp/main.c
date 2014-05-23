@@ -3,8 +3,7 @@
 #include "driver_timer.h"
 #include "uip.h"
 #include "timer.h"
-
-extern u16_t devicedriver_uip_len;
+#include "clock.h"
 
 u16_t devicedriver_poll();
 
@@ -21,7 +20,10 @@ int main(void) {
 	timer_init();
 	_BIS_SR(GIE);
 
-	timer_set(&periodic_timer, CLOCK_SECOND / 2);
+	P1DIR |= BIT0 | BIT4 | BIT5 | BIT6 | BIT7;
+	P1OUT &= ~BIT0 & ~BIT4 & ~BIT5 & ~BIT6 & ~BIT7;
+
+	timer_set(&periodic_timer, CLOCK_SECOND / 10);
 
 	uip_ipaddr_t dst, ipaddr;
 
@@ -41,12 +43,15 @@ int main(void) {
 	}
 
 	for(;;) {
+
 		// Poll Device Driver
 		uip_len = devicedriver_poll();
 		if (uip_len > 0) {
+//			P1OUT ^= BIT4;
 			uip_input();
 			if (uip_len > 0) devicedriver_send();
 		} else if (timer_expired(&periodic_timer)) {
+			P1OUT ^= BIT4;
 			timer_reset(&periodic_timer);
 			// Periodic Processing of connections
 			for(i = 0; i < UIP_CONNS; ++i) {

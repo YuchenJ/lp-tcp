@@ -15,7 +15,9 @@
 #define SLIP_ESC_END 0xDC
 #define SLIP_ESC_ESC 0xDD
 
+u16_t devicedriver_uip_len;
 u16_t _devicedriver_uip_len;  // Internal use only
+u8_t _slip_esc_flag;
 
 void driver_uart_init() {
 	/*** Configure Clock ***/
@@ -41,7 +43,7 @@ int driver_uart_send_char(char _c) {
 	return TX_BUF = (unsigned char) _c;
 }
 
-int driver_uart_send_buf(char *buf, uint16_t len) {
+int driver_uart_send_buf(u8_t *buf, uint16_t len) {
 	uint16_t i;
 	uint8_t res;
 	for (i = 0; i < len; i++) {
@@ -63,6 +65,7 @@ int driver_uart_send_buf(char *buf, uint16_t len) {
 }
 
 void devicedriver_send() {
+	driver_uart_send_char(SLIP_END);
 	driver_uart_send_buf(uip_buf, uip_len);
 	driver_uart_send_char(SLIP_END);
 }
@@ -72,17 +75,30 @@ __interrupt void USCI0RX_ISR(void) {
 	u8_t tmp = UCA0RXBUF;
 	switch(tmp) {
 	case SLIP_ESC:
-		_nop();
+		_slip_esc_flag = 1;
 		break;
 	case SLIP_ESC_END:
-		_nop();
+		if (_slip_esc_flag == 1) {
+			_slip_esc_flag = 0;
+			uip_buf[_devicedriver_uip_len++] = SLIP_END;
+		} else {
+			uip_buf[_devicedriver_uip_len++] = SLIP_ESC_END;
+		}
 		break;
 	case SLIP_ESC_ESC:
-		_nop();
+		if (_slip_esc_flag == 1) {
+			_slip_esc_flag = 0;
+			uip_buf[_devicedriver_uip_len++] = SLIP_ESC;
+		} else {
+			uip_buf[_devicedriver_uip_len++] = SLIP_ESC_ESC;
+		}
 		break;
 	case SLIP_END:
-		devicedriver_uip_len = _devicedriver_uip_len;
-		_devicedriver_uip_len = 0;
+		if (_devicedriver_uip_len != 0) {
+			devicedriver_uip_len = _devicedriver_uip_len;
+			_devicedriver_uip_len = 0;
+			P1OUT ^= BIT0;
+		}
 		break;
 	default:
 		uip_buf[_devicedriver_uip_len++] = tmp;
