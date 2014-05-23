@@ -15,6 +15,8 @@
 
 #include <stdint.h>
 
+u16_t devicedriver_uip_len;
+
 void driver_uart_init();
 
 int driver_uart_send_char(char _c);

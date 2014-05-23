@@ -15,6 +15,8 @@
 #define SLIP_ESC_END 0xDC
 #define SLIP_ESC_ESC 0xDD
 
+u16_t _devicedriver_uip_len;  // Internal use only
+
 void driver_uart_init() {
 	/*** Configure Clock ***/
 	DCOCTL = 0;
@@ -67,6 +69,22 @@ void devicedriver_send() {
 
 #pragma vector=USCIAB0RX_VECTOR
 __interrupt void USCI0RX_ISR(void) {
-	_nop();
-	driver_uart_send_char(UCA0RXBUF);
+	u8_t tmp = UCA0RXBUF;
+	switch(tmp) {
+	case SLIP_ESC:
+		_nop();
+		break;
+	case SLIP_ESC_END:
+		_nop();
+		break;
+	case SLIP_ESC_ESC:
+		_nop();
+		break;
+	case SLIP_END:
+		devicedriver_uip_len = _devicedriver_uip_len;
+		_devicedriver_uip_len = 0;
+		break;
+	default:
+		uip_buf[_devicedriver_uip_len++] = tmp;
+	}
 }
