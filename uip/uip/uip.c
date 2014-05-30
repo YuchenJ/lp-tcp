@@ -386,12 +386,12 @@ const struct uip_eth_addr uip_ethaddr = {{UIP_ETHADDR0,
 	uip_init(void)
 	{
 #if UIP_LISTENPORTS != 0
-		for(c = 0; c < UIP_LISTENPORTS; ++c) {
+		for(c = UIP_LISTENPORTS; c-- > 0; ) {
 			uip_listenports[c] = 0;
 		}
 #endif /* UIP_LISTEN_PORTS != 0 */
 
-		for(c = 0; c < UIP_CONNS; ++c) {
+		for(c = UIP_CONNS; c-- > 1; ) {
 			uip_conns[c].tcpstateflags = UIP_CLOSED;
 		}
 #if UIP_ACTIVE_OPEN
@@ -399,7 +399,7 @@ const struct uip_eth_addr uip_ethaddr = {{UIP_ETHADDR0,
 #endif /* UIP_ACTIVE_OPEN */
 
 #if UIP_UDP
-		for(c = 0; c < UIP_UDP_CONNS; ++c) {
+		for(c = UIP_UDP_CONNS; c-- > 0; ) {
 			uip_udp_conns[c].lport = 0;
 		}
 #endif /* UIP_UDP */
@@ -428,7 +428,7 @@ const struct uip_eth_addr uip_ethaddr = {{UIP_ETHADDR0,
 
 		/* Check if this port is already in use, and if so try to find
      another one. */
-		for(c = 0; c < UIP_CONNS; ++c) {
+		for(c = UIP_CONNS; c-- > 0; ) {
 			conn = &uip_conns[c];
 			if(conn->tcpstateflags != UIP_CLOSED &&
 					conn->lport == htons(lastport)) {
@@ -437,7 +437,7 @@ const struct uip_eth_addr uip_ethaddr = {{UIP_ETHADDR0,
 		}
 
 		conn = 0;
-		for(c = 0; c < UIP_CONNS; ++c) {
+		for(c = UIP_CONNS; c-- > 0; ) {
 			cconn = &uip_conns[c];
 			if(cconn->tcpstateflags == UIP_CLOSED) {
 				conn = cconn;
@@ -529,7 +529,7 @@ const struct uip_eth_addr uip_ethaddr = {{UIP_ETHADDR0,
 	void
 	uip_unlisten(u16_t port)
 	{
-		for(c = 0; c < UIP_LISTENPORTS; ++c) {
+		for(c = UIP_LISTENPORTS; c-- > 0; ) {
 			if(uip_listenports[c] == port) {
 				uip_listenports[c] = 0;
 				return;
@@ -540,7 +540,7 @@ const struct uip_eth_addr uip_ethaddr = {{UIP_ETHADDR0,
 	void
 	uip_listen(u16_t port)
 	{
-		for(c = 0; c < UIP_LISTENPORTS; ++c) {
+		for(c = UIP_LISTENPORTS; c-- > 0; ) {
 			if(uip_listenports[c] == 0) {
 				uip_listenports[c] = port;
 				return;
@@ -1198,8 +1198,7 @@ const struct uip_eth_addr uip_ethaddr = {{UIP_ETHADDR0,
 
 		/* Demultiplex this segment. */
 		/* First check any active connections. */
-		for(uip_connr = &uip_conns[0]; uip_connr <= &uip_conns[UIP_CONNS - 1];
-				++uip_connr) {
+		for(uip_connr = &uip_conns[UIP_CONNS - 1]; uip_connr >= &uip_conns[0]; --uip_connr) {
 			if(uip_connr->tcpstateflags != UIP_CLOSED &&
 					BUF->destport == uip_connr->lport &&
 					BUF->srcport == uip_connr->rport &&
@@ -1219,7 +1218,7 @@ const struct uip_eth_addr uip_ethaddr = {{UIP_ETHADDR0,
 		tmp16 = BUF->destport;
 		/* Next, check listening connections. */
 #if UIP_LISTENPORTS != 0
-		for(c = 0; c < UIP_LISTENPORTS; ++c) {
+		for(c = UIP_LISTENPORTS; c-- > 0; ) {
 			if(tmp16 == uip_listenports[c])
 				goto found_listen;
 		}
@@ -1291,7 +1290,7 @@ const struct uip_eth_addr uip_ethaddr = {{UIP_ETHADDR0,
      CLOSED connections are found. Thanks to Eddie C. Dost for a very
      nice algorithm for the TIME_WAIT search. */
 		uip_connr = 0;
-		for(c = 0; c < UIP_CONNS; ++c) {
+		for(c = UIP_CONNS; c-- > 0; ) {
 			if(uip_conns[c].tcpstateflags == UIP_CLOSED) {
 				uip_connr = &uip_conns[c];
 				break;

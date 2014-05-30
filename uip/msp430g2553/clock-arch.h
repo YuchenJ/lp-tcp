@@ -35,7 +35,7 @@
 #define __CLOCK_ARCH_H__
 
 typedef unsigned int clock_time_t;
-#define CLOCK_CONF_SECOND 32
+#define CLOCK_CONF_SECOND 64
 
 extern volatile clock_time_t sys_time;
 

@@ -14,7 +14,7 @@ void timer_init()
 {
 //	P1DIR |= 0x01;                            // P1.0 output
 	CCTL0 = CCIE;                             // CCR0 interrupt enabled
-	CCR0 = 1024-1;
+	CCR0 = 512-1;
 	TACTL = TASSEL_1 + MC_1;
 }
 

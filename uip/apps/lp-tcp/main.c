@@ -20,8 +20,14 @@ int main(void) {
 	timer_init();
 	_BIS_SR(GIE);
 
-	P1DIR |= BIT0 | BIT4 | BIT5 | BIT6 | BIT7;
-	P1OUT &= ~BIT0 & ~BIT4 & ~BIT5 & ~BIT6 & ~BIT7;
+	//P1DIR |= BIT0 | BIT4 | BIT5 | BIT6 | BIT7;
+	//P1OUT &= ~BIT0 & ~BIT4 & ~BIT5 & ~BIT6 & ~BIT7;
+	P1DIR = 0;
+	P1OUT = 0;
+	P2DIR = 0;
+	P2OUT = 0;
+	P3DIR = 0;
+	P3OUT = 0;
 
 	timer_set(&periodic_timer, CLOCK_SECOND / 10);
 
@@ -35,7 +41,7 @@ int main(void) {
 	uip_setnetmask(ipaddr);
 
 	uip_ipaddr(dst, 192,168,5,1);
-	u16_t port = 1234;
+	static const u16_t port = 1234;
 
 	conn = uip_connect(&dst, htons(port));
 	if (conn == 0) {
@@ -51,10 +57,10 @@ int main(void) {
 			uip_input();
 			if (uip_len > 0) devicedriver_send();
 		} else if (timer_expired(&periodic_timer)) {
-			P1OUT ^= BIT4;
+			//P1OUT ^= BIT4;
 			timer_reset(&periodic_timer);
 			// Periodic Processing of connections
-			for(i = 0; i < UIP_CONNS; ++i) {
+			for(i = UIP_CONNS; i-- > 0; ) {
 				uip_periodic(i);
 				if(uip_len > 0) {
 					devicedriver_send();
@@ -69,7 +75,3 @@ u16_t devicedriver_poll() {
 	devicedriver_uip_len = 0;
 	return tmp;
 }
-
-/*void init_clocks() {
-
-}*/
