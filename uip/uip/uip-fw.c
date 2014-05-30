@@ -282,13 +282,13 @@ static void
 fwcache_register(void)
 {
   struct fwcache_entry *fw;
-  int i, oldest;
+  unsigned int i, oldest;
 
   oldest = FW_TIME;
   fw = NULL;
   
   /* Find the oldest entry in the cache. */
-  for(i = 0; i < FWCACHE_SIZE; ++i) {
+  for(i = FWCACHE_SIZE; i-- > 0; ) {
     if(fwcache[i].timer == 0) {
       fw = &fwcache[i];
       break;

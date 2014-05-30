@@ -57,7 +57,7 @@ uip_split_output(void)
     tcplen = uip_len - UIP_TCPIP_HLEN;
     /* Split the segment in two. If the original packet length was
        odd, we make the second packet one byte larger. */
-    len1 = len2 = tcplen / 2;
+    len1 = len2 = tcplen >> 1;
     if(len1 + len2 < tcplen) {
       ++len2;
     }
