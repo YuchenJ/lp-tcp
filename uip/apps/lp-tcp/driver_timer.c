@@ -9,10 +9,11 @@
 
 #include "clock-arch.h"
 #include "driver_timer.h"
+#include "driver_uart.h"
+#include "uip.h"
 
 void timer_init()
 {
-//	P1DIR |= 0x01;                            // P1.0 output
 	CCTL0 = CCIE;                             // CCR0 interrupt enabled
 	CCR0 = 512-1;
 	TACTL = TASSEL_1 + MC_1;
@@ -22,5 +23,11 @@ void timer_init()
 #pragma vector=TIMER0_A0_VECTOR
 __interrupt void Timer_A (void)
 {
+	static int count = 0;
 	sys_time += 1;
+
+	if (++count == CLOCK_CONF_SECOND / CLOCK_SECOND_FRAC) {
+		count = 0;
+		_bic_SR_register_on_exit(LPM3_bits + GIE);
+	}
 }

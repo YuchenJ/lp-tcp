@@ -97,7 +97,7 @@ __interrupt void USCI0RX_ISR(void) {
 		if (_devicedriver_uip_len != 0) {
 			devicedriver_uip_len = _devicedriver_uip_len;
 			_devicedriver_uip_len = 0;
-			P1OUT ^= BIT0;
+			//P1OUT ^= BIT0;
 		}
 		break;
 	default:
