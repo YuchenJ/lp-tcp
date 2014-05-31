@@ -21,6 +21,7 @@ int main(void) {
 
 	//P1DIR |= BIT0 | BIT4 | BIT5 | BIT6 | BIT7;
 	//P1OUT &= ~BIT0 & ~BIT4 & ~BIT5 & ~BIT6 & ~BIT7;
+	//P1DIR |= BIT0;
 	P1DIR = 0;
 	P1OUT = 0;
 	P2DIR = 0;
@@ -28,7 +29,7 @@ int main(void) {
 	P3DIR = 0;
 	P3OUT = 0;
 
-	timer_set(&periodic_timer, CLOCK_SECOND / 10);
+	//timer_set(&periodic_timer, CLOCK_SECOND / 10);
 
 	uip_ipaddr_t dst, ipaddr;
 
@@ -48,7 +49,7 @@ int main(void) {
 	}
 
 	for(;;) {
-		//P1OUT ^= BIT6;
+		//P1OUT |= BIT0;
 		// Poll Device Driver
 		uip_len = devicedriver_poll();
 		if (uip_len > 0) {
@@ -56,17 +57,19 @@ int main(void) {
 			uip_input();
 			if (uip_len > 0)
 				devicedriver_send();
-		}
-		/*if (timer_expired(&periodic_timer)) {
+		} else {
+		//if (timer_expired(&periodic_timer)) {
 			//P1OUT ^= BIT4;
-			timer_reset(&periodic_timer);*/
+			//timer_reset(&periodic_timer);
 			// Periodic Processing of connections
-		for(i = UIP_CONNS; i-- > 0; ) {
-			uip_periodic(i);
-			if(uip_len > 0) {
-				devicedriver_send();
+			for(i = UIP_CONNS; i-- > 0; ) {
+				uip_periodic(i);
+				if(uip_len > 0) {
+					devicedriver_send();
+				}
 			}
 		}
+		//P1OUT &= ~BIT0;
 		_BIS_SR(LPM3_bits + GIE);
 	}
 }
