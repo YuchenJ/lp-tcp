@@ -1,6 +1,7 @@
 #include <msp430.h>
 #include "driver_uart.h"
 #include "driver_timer.h"
+#include "driver_btn.h"
 #include "uip.h"
 #include "timer.h"
 #include "clock.h"
@@ -9,25 +10,27 @@ u16_t devicedriver_poll();
 
 int main(void) {
 	struct uip_conn *conn;
-	struct timer periodic_timer;
+	//struct timer periodic_timer;
 	unsigned int i;
 
 	WDTCTL = WDTPW | WDTHOLD;		// Stop watchdog timer
 
-//	init_clocks();
-	driver_uart_init();
-	uip_init();
-	timer_init();
-
-	//P1DIR |= BIT0 | BIT4 | BIT5 | BIT6 | BIT7;
-	//P1OUT &= ~BIT0 & ~BIT4 & ~BIT5 & ~BIT6 & ~BIT7;
-	//P1DIR |= BIT0;
-	P1DIR = 0;
+	P1DIR |= BIT0 + BIT6;
 	P1OUT = 0;
 	P2DIR = 0;
 	P2OUT = 0;
 	P3DIR = 0;
 	P3OUT = 0;
+
+//	init_clocks();
+	driver_uart_init();
+	uip_init();
+	timer_init();
+	btn_init();
+
+	//P1DIR |= BIT0 | BIT4 | BIT5 | BIT6 | BIT7;
+	//P1OUT &= ~BIT0 & ~BIT4 & ~BIT5 & ~BIT6 & ~BIT7;
+	//P1DIR |= BIT0;
 
 	//timer_set(&periodic_timer, CLOCK_SECOND / 10);
 
@@ -64,6 +67,7 @@ int main(void) {
 			// Periodic Processing of connections
 			for(i = UIP_CONNS; i-- > 0; ) {
 				uip_periodic(i);
+				//P1OUT ^= BIT6;
 				if(uip_len > 0) {
 					devicedriver_send();
 				}

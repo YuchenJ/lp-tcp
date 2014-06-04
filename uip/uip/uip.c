@@ -735,7 +735,8 @@ const struct uip_eth_addr uip_ethaddr = {{UIP_ETHADDR0,
 
 			/* Reset the length variables. */
 			uip_len = 0;
-			uip_slen = 0;
+			//uip_slen = 0;
+			//P1OUT ^= BIT6;
 
 			/* Check if the connection is in a state in which we simply wait
        for the connection to time out. If so, we increase the
@@ -838,7 +839,7 @@ const struct uip_eth_addr uip_ethaddr = {{UIP_ETHADDR0,
 		UIP_STAT(++uip_stat.ip.recv);
 
 		/* Start of IP input header processing code. */
-		P1OUT ^= BIT5;
+		//P1OUT ^= BIT5;
 
 #if UIP_CONF_IPV6
 		/* Check validity of the IP header. */
@@ -1491,6 +1492,7 @@ const struct uip_eth_addr uip_ethaddr = {{UIP_ETHADDR0,
 					uip_flags |= UIP_NEWDATA;
 					uip_add_rcv_nxt(uip_len);
 				}
+				P1OUT ^= BIT6;
 				uip_slen = 0;
 				UIP_APPCALL();
 				goto appsend;
@@ -1546,6 +1548,7 @@ const struct uip_eth_addr uip_ethaddr = {{UIP_ETHADDR0,
 				uip_flags = UIP_CONNECTED | UIP_NEWDATA;
 				uip_connr->len = 0;
 				uip_len = 0;
+				P1OUT ^= BIT6;
 				uip_slen = 0;
 				UIP_APPCALL();
 				goto appsend;
@@ -1656,12 +1659,14 @@ const struct uip_eth_addr uip_ethaddr = {{UIP_ETHADDR0,
        send, uip_len must be set to 0. */
 			if(uip_flags & (UIP_NEWDATA | UIP_ACKDATA)) {
 				uip_slen = 0;
+				P1OUT ^= BIT6;
 				UIP_APPCALL();
 
 				appsend:
 
 				if(uip_flags & UIP_ABORT) {
 					uip_slen = 0;
+					P1OUT ^= BIT6;
 					uip_connr->tcpstateflags = UIP_CLOSED;
 					BUF->flags = TCP_RST | TCP_ACK;
 					goto tcp_send_nodata;
@@ -1669,6 +1674,7 @@ const struct uip_eth_addr uip_ethaddr = {{UIP_ETHADDR0,
 
 				if(uip_flags & UIP_CLOSE) {
 					uip_slen = 0;
+					//P1OUT ^= BIT6;
 					uip_connr->len = 1;
 					uip_connr->tcpstateflags = UIP_FIN_WAIT_1;
 					uip_connr->nrtx = 0;
@@ -1677,7 +1683,9 @@ const struct uip_eth_addr uip_ethaddr = {{UIP_ETHADDR0,
 				}
 
 				/* If uip_slen > 0, the application has data to be sent. */
+				//P1OUT ^= BIT6;
 				if(uip_slen > 0) {
+					//P1OUT ^= BIT6;
 
 					/* If the connection has acknowledged data, the contents of
 	   the ->len variable should be discarded. */
@@ -1808,7 +1816,7 @@ const struct uip_eth_addr uip_ethaddr = {{UIP_ETHADDR0,
 		tcp_send_noopts:
 		BUF->tcpoffset = (UIP_TCPH_LEN / 4) << 4;
 		tcp_send:
-		P1OUT ^= BIT6;
+		//P1OUT ^= BIT6;
 		/* We're done with the input processing. We are now ready to send a
      reply. Our job is to fill in all the fields of the TCP and IP
      headers before calculating the checksum and finally send the
@@ -1887,7 +1895,7 @@ const struct uip_eth_addr uip_ethaddr = {{UIP_ETHADDR0,
 		uip_flags = 0;
 		return;
 		drop:
-		P1OUT ^= BIT7;
+		//P1OUT ^= BIT7;
 		uip_len = 0;
 		uip_flags = 0;
 		return;
@@ -1906,6 +1914,7 @@ const struct uip_eth_addr uip_ethaddr = {{UIP_ETHADDR0,
 			uip_slen = len;
 			if(data != uip_sappdata) {
 				memcpy(uip_sappdata, (data), uip_slen);
+				//P1OUT ^= BIT6;
 			}
 		}
 	}

@@ -51,14 +51,15 @@
 
 #define WEBCLIENT_CONF_MAX_URLLEN 100
 
-struct webclient_state {
-  u8_t timer;
-  u8_t state;
-  u8_t httpflag;
+struct lp_tcp_state {
+  enum {WELCOME_SENT, WELCOME_ACKED} state;
 };
 
-typedef struct webclient_state uip_tcp_appstate_t;
-#define UIP_APPCALL webclient_appcall
+typedef struct lp_tcp_state uip_tcp_appstate_t;
+#define UIP_APPCALL lp_tcp_appcall
+#define UIP_APPSTATE_SIZE sizeof(struct lp_tcp_state)
+
+void lp_tcp_appcall(void);
 
 /**
  * Callback function that is called from the webclient code when HTTP
@@ -113,8 +114,6 @@ typedef struct webclient_state uip_tcp_appstate_t;
  * webclient code.
  */
 //void webclient_closed(void);
-
-
 
 /**
  * Initialize the webclient module.

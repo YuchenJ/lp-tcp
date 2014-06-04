@@ -36,7 +36,7 @@
 
 typedef unsigned int clock_time_t;
 #define CLOCK_CONF_SECOND 64
-#define CLOCK_SECOND_FRAC 1
+#define CLOCK_SECOND_FRAC 10
 
 extern volatile clock_time_t sys_time;
 
