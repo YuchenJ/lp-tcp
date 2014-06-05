@@ -1492,7 +1492,7 @@ const struct uip_eth_addr uip_ethaddr = {{UIP_ETHADDR0,
 					uip_flags |= UIP_NEWDATA;
 					uip_add_rcv_nxt(uip_len);
 				}
-				P1OUT ^= BIT6;
+				//P1OUT ^= BIT6;
 				uip_slen = 0;
 				UIP_APPCALL();
 				goto appsend;
@@ -1548,7 +1548,7 @@ const struct uip_eth_addr uip_ethaddr = {{UIP_ETHADDR0,
 				uip_flags = UIP_CONNECTED | UIP_NEWDATA;
 				uip_connr->len = 0;
 				uip_len = 0;
-				P1OUT ^= BIT6;
+				//P1OUT ^= BIT6;
 				uip_slen = 0;
 				UIP_APPCALL();
 				goto appsend;
@@ -1659,14 +1659,14 @@ const struct uip_eth_addr uip_ethaddr = {{UIP_ETHADDR0,
        send, uip_len must be set to 0. */
 			if(uip_flags & (UIP_NEWDATA | UIP_ACKDATA)) {
 				uip_slen = 0;
-				P1OUT ^= BIT6;
+				//P1OUT ^= BIT6;
 				UIP_APPCALL();
 
 				appsend:
 
 				if(uip_flags & UIP_ABORT) {
 					uip_slen = 0;
-					P1OUT ^= BIT6;
+					//P1OUT ^= BIT6;
 					uip_connr->tcpstateflags = UIP_CLOSED;
 					BUF->flags = TCP_RST | TCP_ACK;
 					goto tcp_send_nodata;

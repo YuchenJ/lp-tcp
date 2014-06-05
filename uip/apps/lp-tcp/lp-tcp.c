@@ -25,6 +25,7 @@ void lp_tcp_appcall(void) {
 	}
 
 	if (uip_newdata()) {
+		P1OUT ^= BIT0;
 		uip_send("Received packet\n", 16);
 	}
 

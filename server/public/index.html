@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<title> MSP430 TCP/IP Console </title>
+		<script src="http://code.jquery.com/jquery-2.0.3.js"></script>
+		<script src="//netdna.bootstrapcdn.com/bootstrap/3.1.1/js/bootstrap.min.js"></script>
+		<link rel="stylesheet" href="//netdna.bootstrapcdn.com/bootstrap/3.1.1/css/bootstrap.min.css">
+		<link rel="stylesheet" type="text/css" href="../static/style.css">
+		<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+		<!--[if lt IE 9]>
+			<script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+			<script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
+		<![endif]-->
+	</head>
+	<body>
+		<div id="title" style="text-align:center;">
+			<h1>MSP430 TCP/IP Console</h1>
+		</div>
+		<div id="main">
+			<button type="button" id="blink" class="btn btn-success">Blink LED</button>
+			<table id="stats" class="table table-striped">
+				<thead>
+					<tr>
+					  <th>Handshake</th>
+						<th>Total presses</th>
+						<th>Button state</th>
+					</tr>
+					<tr>
+					  <td><div id="handshake">no</div></td>
+					  <td><div id="presses">0</div></td>
+					  <td><div id="orientation">up</div></td>
+					</tr>
+				</thead>
+				<tbody>
+				</tbody>
+			</table>
+		</div>
+		<script tpye="text/javascript">
+			var state = "stopped";
+			var get_state = function() {
+				$.ajax({
+					url: '/state',
+					cache: false,
+					dataType: "json",
+					type: 'POST',
+					success: function(data) {
+						document.getElementById("handshake").innerHTML = data.handshake;
+						document.getElementById("presses").innerHTML = data.button.presses;
+						document.getElementById("orientation").innerHTML = data.button.orientation;
+					}
+				});
+			};
+			var blink_led = function() {
+				$.ajax({
+					url: '/blink',
+					cache: false,
+					dataType: "json",
+					type: 'POST',
+					success: function() {}
+				});
+			};
+			$('button#blink').click(blink_led);
+			var intID = setInterval(get_state, 150);
+		</script>
+	</body>
+</html>
+				
