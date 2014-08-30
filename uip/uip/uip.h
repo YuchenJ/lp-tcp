@@ -52,7 +52,6 @@
 #define __UIP_H__
 
 #include "uipopt.h"
-
 /**
  * Repressentation of an IP address.
  *

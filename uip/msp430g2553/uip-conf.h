@@ -156,7 +156,7 @@ typedef unsigned short uip_stats_t;
 /*#include "dhcpc.h"*/
 /*#include "resolv.h"*/
 /*#include "webclient.h"*/
-#include "lp-tcp.h"
+#include <lp-tcp.h>
 
 #endif /* __UIP_CONF_H__ */
 

@@ -10,7 +10,7 @@ u16_t devicedriver_poll();
 
 int main(void) {
 	struct uip_conn *conn;
-	//struct timer periodic_timer;
+	struct timer periodic_timer;
 	unsigned int i;
 
 	WDTCTL = WDTPW | WDTHOLD;		// Stop watchdog timer
@@ -23,16 +23,28 @@ int main(void) {
 	P3OUT = 0;
 
 //	init_clocks();
+	__enable_interrupt();
+
 	driver_uart_init();
-	uip_init();
+
+
+	//driver_uart_send_buf("hello",5);
+    //__bis_SR_register(LPM3_bits | GIE);       // Enter LPM3, interrupts enabled
+
+
+    uip_init();
 	timer_init();
 	btn_init();
+
+
+	//	driver_uart_send_buf("hello",5);
+	//	__delay_cycles(1000);
 
 	//P1DIR |= BIT0 | BIT4 | BIT5 | BIT6 | BIT7;
 	//P1OUT &= ~BIT0 & ~BIT4 & ~BIT5 & ~BIT6 & ~BIT7;
 	//P1DIR |= BIT0;
 
-	//timer_set(&periodic_timer, CLOCK_SECOND / 10);
+	timer_set(&periodic_timer, CLOCK_SECOND / 10);
 
 	uip_ipaddr_t dst, ipaddr;
 
@@ -51,6 +63,7 @@ int main(void) {
 		_nop();
 	}
 
+
 	for(;;) {
 		//P1OUT |= BIT0;
 		// Poll Device Driver
@@ -61,20 +74,21 @@ int main(void) {
 			if (uip_len > 0)
 				devicedriver_send();
 		} else {
-		//if (timer_expired(&periodic_timer)) {
-			//P1OUT ^= BIT4;
-			//timer_reset(&periodic_timer);
-			// Periodic Processing of connections
-			for(i = UIP_CONNS; i-- > 0; ) {
-				uip_periodic(i);
-				//P1OUT ^= BIT6;
-				if(uip_len > 0) {
-					devicedriver_send();
+			if (timer_expired(&periodic_timer)) {
+				//P1OUT ^= BIT4;
+				timer_reset(&periodic_timer);
+				// Periodic Processing of connections
+				for(i = UIP_CONNS; i-- > 0; ) {
+					uip_periodic(i);
+					//P1OUT ^= BIT6;
+					if(uip_len > 0) {
+						devicedriver_send();
+					}
 				}
 			}
 		}
 		//P1OUT &= ~BIT0;
-		_BIS_SR(LPM3_bits + GIE);
+		//_BIS_SR(LPM3_bits + GIE);
 	}
 }
 

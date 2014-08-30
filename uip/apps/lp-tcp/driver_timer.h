@@ -6,4 +6,4 @@
  */
 
 void timer_init(void);
-__interrupt void Timer_A(void);
+//__interrupt void Timer_A(void);

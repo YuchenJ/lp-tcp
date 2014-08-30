@@ -8,10 +8,10 @@
 #ifndef DRIVER_UART_H_
 #define DRIVER_UART_H_
 
-#ifdef __MSP430G2553__
+#ifdef __MSP430FR5969__
 #define TX_BUF  UCA0TXBUF
-#define TX_BUSY (!(UCA0TXIFG & IFG2))
-#endif // __MSP430G2553__
+#define TX_BUSY (!(UCA0IFG & UCTXIFG))
+#endif // __MSP43FR5969__
 
 #include <stdint.h>
 #include "uip.h"

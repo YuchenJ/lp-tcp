@@ -14,9 +14,9 @@
 
 void timer_init()
 {
-	CCTL0 = CCIE;                             // CCR0 interrupt enabled
-	CCR0 = 512-1;
-	TACTL = TASSEL_1 + MC_1;
+	TA0CCTL0 = CCIE;                             // CCR0 interrupt enabled
+	TA0CCR0 = 512-1;
+	TA0CTL = TASSEL_1 + MC_1;
 }
 
 // Timer A0 interrupt service routine
@@ -28,6 +28,6 @@ __interrupt void Timer_A (void)
 
 	if (++count == CLOCK_CONF_SECOND / CLOCK_SECOND_FRAC) {
 		count = 0;
-		_bic_SR_register_on_exit(LPM3_bits + GIE);
+		//_bic_SR_register_on_exit(LPM3_bits + GIE);
 	}
 }
